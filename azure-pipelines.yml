@@ -3,6 +3,8 @@ trigger:
 
 pool:
   vmImage: 'ubuntu-latest'  # Use a Linux agent
+  demands:
+   - agent.name: defualt
 
 steps:
 - script: |
