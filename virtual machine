@@ -1,0 +1,57 @@
+
+- name: Create Azure VM
+  hosts: localhost
+  connection: local
+  tasks:
+  - name: Create a resource group
+    azure_rm_resourcegroup:
+      name: "ProjectPractice"
+      location: "eastus"
+  - name: Create virtual network
+    azure_rm_virtualnetwork:
+      resource_group: ProjectPractice
+      name: testvm
+      address_prefixes: "10.0.0.0/16"
+  - name: Add subnet
+    azure_rm_subnet:
+      resource_group: ProjectPractice
+      name: testvm
+      address_prefix: "10.0.1.0/24"
+      virtual_network: testvm
+  - name: Create public IP address
+    azure_rm_publicipaddress:
+      resource_group: ProjectPractice
+      allocation_method: Static
+      name: testvm
+  - name: Create Network Security Group that allows SSH
+    azure_rm_securitygroup:
+      resource_group: ProjectPractice
+      name: testvm
+      rules:
+        - name: SSH
+          protocol: Tcp
+          destination_port_range: 22
+          access: Allow
+          priority: 1001
+          direction: Inbound
+  - name: Create virtual network inteface card
+    azure_rm_networkinterface:
+      resource_group: ProjectPractice
+      name: testvm
+      virtual_network: testvm
+      subnet: testvm
+      public_ip_name: testvm
+      security_group: testvm
+  - name: Create VM
+    azure_rm_virtualmachine:
+      resource_group: ProjectPractice
+      name: testvm
+      vm_size: Standard_DS1_v2
+      admin_username: azureuser
+      admin_password: Password@123
+      network_interfaces: testvm
+      image:
+        offer: UbuntuServer
+        publisher: Canonical
+        sku: 16.04-LTS
+        version: latest
