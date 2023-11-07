@@ -1,0 +1,26 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+trigger:
+- master  
+
+pool:
+  vmImage: 'ubuntu-latest'  
+
+steps:
+- script: |
+    # Install Ansible if it's not already installed
+    sudo apt-get update -y
+    sudo apt-get install -y ansible
+
+    # Clone the Git repository
+    git clone https://github.com/your/repo.git
+
+    
+    cd repo/playbook-directory
+
+    # Run the Ansible playbook
+    ansible-playbook your-playbook.yml
+  displayName: 'Run Ansible Playbook'
